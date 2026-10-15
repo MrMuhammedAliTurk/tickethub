@@ -1,0 +1,24 @@
+{
+  "name": "tickethub",
+  "version": "1.0.0",
+  "description": "Etkinlik ve Biletleme Sistemi REST API'si (Node.js + Express.js)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "rest-api",
+    "crud",
+    "middleware",
+    "event",
+    "ticketing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

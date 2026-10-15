@@ -1,0 +1,131 @@
+{
+  "venues": [
+    {
+      "id": "ven_001",
+      "name": "Atatürk Kültür Merkezi",
+      "city": "İstanbul",
+      "address": "Taksim, Beyoğlu",
+      "capacity": 2000
+    },
+    {
+      "id": "ven_002",
+      "name": "KüçükÇiftlik Park",
+      "city": "İstanbul",
+      "address": "Beşiktaş",
+      "capacity": 10000
+    },
+    {
+      "id": "ven_003",
+      "name": "Ankara Opera Sahnesi",
+      "city": "Ankara",
+      "address": "Opera Meydanı",
+      "capacity": 1200
+    },
+    {
+      "id": "ven_004",
+      "name": "İzmir Kültürpark",
+      "city": "İzmir",
+      "address": "Konak",
+      "capacity": 5000
+    }
+  ],
+  "events": [
+    {
+      "id": "evt_001",
+      "title": "İstanbul Caz Gecesi",
+      "description": "Ünlü caz sanatçılarının sahne alacağı unutulmaz bir gece.",
+      "category": "konser",
+      "city": "İstanbul",
+      "venueId": "ven_001",
+      "date": "2026-11-20",
+      "price": 350,
+      "capacity": 2000,
+      "status": "active"
+    },
+    {
+      "id": "evt_002",
+      "title": "Boğaziçi Yaz Festivali",
+      "description": "Bir hafta sürecek açık hava müzik festivali.",
+      "category": "festival",
+      "city": "İstanbul",
+      "venueId": "ven_002",
+      "date": "2026-07-01",
+      "price": 500,
+      "capacity": 10000,
+      "status": "active"
+    },
+    {
+      "id": "evt_003",
+      "title": "Ankara Teknoloji Konferansı",
+      "description": "Yazılım ve yapay zeka alanında güncel konuların konuşulacağı konferans.",
+      "category": "konferans",
+      "city": "Ankara",
+      "venueId": "ven_003",
+      "date": "2026-12-05",
+      "price": 200,
+      "capacity": 1200,
+      "status": "active"
+    },
+    {
+      "id": "evt_004",
+      "title": "Hamlet - Tiyatro Oyunu",
+      "description": "Shakespeare'in ölümsüz eseri İzmir'de sahneleniyor.",
+      "category": "tiyatro",
+      "city": "İzmir",
+      "venueId": "ven_004",
+      "date": "2026-10-30",
+      "price": 150,
+      "capacity": 5000,
+      "status": "active"
+    }
+  ],
+  "attendees": [
+    {
+      "id": "att_001",
+      "name": "Musa Yılmaz",
+      "email": "musa@example.com",
+      "phone": "05551112233"
+    },
+    {
+      "id": "att_002",
+      "name": "Elif Demir",
+      "email": "elif@example.com",
+      "phone": "05443332211"
+    },
+    {
+      "id": "att_003",
+      "name": "Ahmet Kaya",
+      "email": "ahmet@example.com",
+      "phone": "05332221100"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "tkt_001",
+      "eventId": "evt_001",
+      "attendeeId": "att_001",
+      "seat": "A1",
+      "price": 350,
+      "purchaseDate": "2026-10-01T10:30:00.000Z",
+      "status": "active"
+    },
+    {
+      "id": "tkt_002",
+      "eventId": "evt_001",
+      "attendeeId": "att_002",
+      "seat": "A2",
+      "price": 350,
+      "purchaseDate": "2026-10-02T14:15:00.000Z",
+      "status": "active"
+    },
+    {
+      "id": "tkt_003",
+      "eventId": "evt_002",
+      "attendeeId": "att_003",
+      "seat": "G1",
+      "price": 500,
+      "purchaseDate": "2026-10-03T09:00:00.000Z",
+      "status": "active"
+    }
+  ]
+}

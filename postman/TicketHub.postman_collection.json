@@ -1,0 +1,188 @@
+{
+  "info": {
+    "name": "TicketHub API",
+    "description": "Etkinlik ve Biletleme Sistemi REST API - Postman test koleksiyonu",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "List Events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/events", "host": ["{{baseUrl}}"], "path": ["events"] }
+          }
+        },
+        {
+          "name": "List Events (Filter + Sort + Paginate)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/events?category=konser&sort=price:desc&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["events"],
+              "query": [
+                { "key": "category", "value": "konser" },
+                { "key": "sort", "value": "price:desc" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Event Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/events/evt_001", "host": ["{{baseUrl}}"], "path": ["events", "evt_001"] }
+          }
+        },
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"İzmir Caz Buluşması\",\n  \"description\": \"Ege'nin en iyi caz sanatçıları bir arada.\",\n  \"category\": \"konser\",\n  \"city\": \"İzmir\",\n  \"venueId\": \"ven_004\",\n  \"date\": \"2026-11-15\",\n  \"price\": 300,\n  \"capacity\": 800\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/events", "host": ["{{baseUrl}}"], "path": ["events"] }
+          }
+        },
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"price\": 275,\n  \"status\": \"active\"\n}" },
+            "url": { "raw": "{{baseUrl}}/events/evt_001", "host": ["{{baseUrl}}"], "path": ["events", "evt_001"] }
+          }
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/events/evt_004", "host": ["{{baseUrl}}"], "path": ["events", "evt_004"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Venues",
+      "item": [
+        {
+          "name": "List Venues",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/venues", "host": ["{{baseUrl}}"], "path": ["venues"] }
+          }
+        },
+        {
+          "name": "Create Venue",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bostancı Gösteri Merkezi\",\n  \"city\": \"İstanbul\",\n  \"address\": \"Kadıköy\",\n  \"capacity\": 3000\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/venues", "host": ["{{baseUrl}}"], "path": ["venues"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendees",
+      "item": [
+        {
+          "name": "List Attendees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/attendees", "host": ["{{baseUrl}}"], "path": ["attendees"] }
+          }
+        },
+        {
+          "name": "Create Attendee",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Zeynep Arslan\",\n  \"email\": \"zeynep@example.com\",\n  \"phone\": \"05001112233\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/attendees", "host": ["{{baseUrl}}"], "path": ["attendees"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "List Tickets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/tickets", "host": ["{{baseUrl}}"], "path": ["tickets"] }
+          }
+        },
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"evt_001\",\n  \"attendeeId\": \"att_003\",\n  \"seat\": \"A5\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/tickets", "host": ["{{baseUrl}}"], "path": ["tickets"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "System Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/reports/summary", "host": ["{{baseUrl}}"], "path": ["reports", "summary"] }
+          }
+        },
+        {
+          "name": "Event Sales Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/reports/evt_001/sales", "host": ["{{baseUrl}}"], "path": ["reports", "evt_001", "sales"] }
+          }
+        },
+        {
+          "name": "Event Attendees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/reports/evt_001/attendees", "host": ["{{baseUrl}}"], "path": ["reports", "evt_001", "attendees"] }
+          }
+        }
+      ]
+    }
+  ]
+}
