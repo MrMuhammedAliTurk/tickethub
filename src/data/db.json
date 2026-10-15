@@ -77,6 +77,18 @@
       "price": 150,
       "capacity": 5000,
       "status": "active"
+    },
+    {
+      "id": "evt_e8381b56",
+      "title": "İzmir Caz Buluşması",
+      "description": "Ege'nin en iyi caz sanatçıları bir arada.",
+      "category": "konser",
+      "city": "İzmir",
+      "venueId": "ven_004",
+      "date": "2026-11-15",
+      "price": 300,
+      "capacity": 800,
+      "status": "active"
     }
   ],
   "attendees": [
@@ -97,6 +109,12 @@
       "name": "Ahmet Kaya",
       "email": "ahmet@example.com",
       "phone": "05332221100"
+    },
+    {
+      "id": "att_de07694e",
+      "name": "Zeynep Arslan",
+      "email": "zeynep@example.com",
+      "phone": "05001112233"
     }
   ],
   "tickets": [
@@ -125,6 +143,15 @@
       "seat": "G1",
       "price": 500,
       "purchaseDate": "2026-10-03T09:00:00.000Z",
+      "status": "active"
+    },
+    {
+      "id": "tkt_fcf298dd",
+      "eventId": "evt_001",
+      "attendeeId": "att_003",
+      "seat": "A5",
+      "price": 350,
+      "purchaseDate": "2026-10-15T09:01:18.940Z",
       "status": "active"
     }
   ]
