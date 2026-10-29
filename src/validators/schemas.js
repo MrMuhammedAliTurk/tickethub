@@ -13,7 +13,7 @@ const event = {
   category: { required: true, type: 'enum', values: CATEGORIES },
   city: { required: true, type: 'string' },
   venueId: { required: true, type: 'string' },
-  date: { required: true, type: 'string' },
+  date: { required: true, type: 'date' },
   price: { required: true, type: 'number', min: 0 },
   capacity: { required: true, type: 'number', min: 1 },
   status: { type: 'enum', values: EVENT_STATUSES }

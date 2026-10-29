@@ -13,11 +13,11 @@ TicketHub; etkinliklerin, mekanların, katılımcıların ve biletlerin tek bir 
 - ✅ Etkinlik (Event), Mekan (Venue), Katılımcı (Attendee) ve Bilet (Ticket) için **tam CRUD** operasyonları
 - ✅ **Routing** yapısı (modüler rota dosyaları)
 - ✅ **Logger middleware** (her isteği konsola ve log dosyasına kaydeder)
-- ✅ **Validation middleware** (zorunlu alan, tip, enum ve e-posta doğrulaması)
+- ✅ **Güçlendirilmiş validation middleware** (zorunlu alan, veri tipi, enum, e-posta ve tarih doğrulaması; tanımsız alanların reddi)
 - ✅ **Filtreleme, arama, sıralama ve sayfalama**
-- ✅ **Kapasite kontrolü** (kapasite dolduğunda satış engellenir)
+- ✅ **Veri bütünlüğü kontrolleri** (mekan/etkinlik/katılımcı ilişkileri, koltuk çakışması ve kapasite kontrolü)
 - ✅ **Raporlama servisleri** (satış, doluluk, katılımcı listesi, genel özet)
-- ✅ **JSON tabanlı veri yönetimi** (kalıcılık `src/data/db.json` üzerinden)
+- ✅ **JSON tabanlı veri yönetimi** (atomik dosya yazımı, bozuk dosya için güvenli hata davranışı ve kopyalanmış okuma sonuçları)
 
 ## Teknolojiler
 
@@ -60,7 +60,7 @@ PORT=4000 npm start
 
 ## Test
 
-API testleri için `postman/TicketHub.postman_collection.json` dosyasındaki Postman koleksiyonunu içe aktarabilirsiniz. Detaylı test senaryoları [docs/TEST-DOKUMANTASYONU.md](docs/TEST-DOKUMANTASYONU.md) dosyasında yer almaktadır.
+Postman testleri için `postman/TicketHub.postman_collection.json` dosyasını içe aktarabilirsiniz. Otomatik API testlerini çalıştırmak için `npm test` komutunu kullanın. Testler geçici bir JSON veri dosyası kullandığından `src/data/db.json` içindeki başlangıç verilerini değiştirmez. Detaylı test senaryoları [docs/TEST-DOKUMANTASYONU.md](docs/TEST-DOKUMANTASYONU.md) dosyasındadır.
 
 ## Klasör Yapısı
 
@@ -75,12 +75,14 @@ tickethub/
 │   │   ├── db.json           # JSON veri deposu (seed data)
 │   │   └── store.js          # Veri katmanı (okuma/yazma)
 │   ├── routes/               # Rota tanımları
-│   ├── controllers/          # İş mantığı (controller'lar)
+│   ├── controllers/          # HTTP istek/yanıt adaptörleri
+│   ├── services/             # İş kuralları ve uygulama mantığı
 │   ├── middleware/           # Logger, validation, error handler
 │   ├── validators/           # Validation şemaları
 │   └── utils/                # Yardımcı fonksiyonlar
 ├── docs/                     # Proje dokümantasyonu
 ├── postman/                  # Postman koleksiyonu
+├── tests/                    # Otomatik API ve veri katmanı testleri (node:test)
 ├── package.json
 └── README.md
 ```
@@ -97,3 +99,8 @@ tickethub/
 ## Lisans
 
 MIT
+
+
+## Mimari notu (v2)
+
+İş mantığı `src/services/` altındaki servis katmanına taşınmıştır. Controller'lar HTTP parametrelerini servislere aktarır ve servis sonuçlarını HTTP yanıtına dönüştürür. JSON veri deposu güncellemeleri önce geçici dosyaya yazar ve ardından hedef dosyayla değiştirir. Veri dosyası bozuksa uygulama dosyayı sessizce sıfırlamaz; açık bir hata mesajıyla başlamayı durdurur.

@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const LOG_DIR = path.join(__dirname, '..', '..', 'logs');
-const LOG_FILE = path.join(LOG_DIR, 'api-requests.log');
+const DEFAULT_LOG_DIR = path.join(__dirname, '..', '..', 'logs');
+const LOG_FILE = process.env.TICKETHUB_LOG_FILE || path.join(DEFAULT_LOG_DIR, 'api-requests.log');
+const LOG_DIR = path.dirname(LOG_FILE);
 
 function ensureLogDir() {
   if (!fs.existsSync(LOG_DIR)) {

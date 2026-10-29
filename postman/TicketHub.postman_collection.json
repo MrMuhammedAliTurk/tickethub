@@ -1,188 +1,1010 @@
 {
   "info": {
-    "name": "TicketHub API",
-    "description": "Etkinlik ve Biletleme Sistemi REST API - Postman test koleksiyonu",
+    "name": "TicketHub API — Tam Test Koleksiyonu",
+    "description": "TicketHub API CRUD, doğrulama, veri bütünlüğü, filtreleme, sayfalama, raporlama ve hata durumları için Postman koleksiyonu. İstekleri koleksiyon sırasıyla çalıştırmak için Collection Runner kullanılabilir.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:3000",
-      "type": "string"
-    }
-  ],
   "item": [
     {
-      "name": "Events",
+      "name": "Events — Etkinlikler",
       "item": [
         {
-          "name": "List Events",
+          "name": "Etkinlikleri Listele",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/events", "host": ["{{baseUrl}}"], "path": ["events"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "List Events (Filter + Sort + Paginate)",
+          "name": "Filtreleme + Sıralama + Sayfalama",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/events?category=konser&sort=price:desc&page=1&limit=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["events"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events"
+              ],
               "query": [
-                { "key": "category", "value": "konser" },
-                { "key": "sort", "value": "price:desc" },
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "10" }
+                {
+                  "key": "category",
+                  "value": "konser"
+                },
+                {
+                  "key": "sort",
+                  "value": "price:desc"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Get Event Detail",
+          "name": "Etkinlik Oluştur",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"TicketHub API Test Etkinliği\",\n  \"description\": \"Postman koleksiyon testi için oluşturulmuş deneme etkinliği.\",\n  \"category\": \"konferans\",\n  \"city\": \"Ankara\",\n  \"venueId\": \"ven_004\",\n  \"date\": \"2027-06-20\",\n  \"price\": 225,\n  \"capacity\": 250\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201 döner\", function () { pm.response.to.have.status(201); });",
+                  "const responseData = pm.response.json();",
+                  "pm.collectionVariables.set(\"createdEventId\", responseData.id);",
+                  "pm.test(\"Oluşturulan etkinlik ID içerir\", function () { pm.expect(responseData.id).to.be.a(\"string\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oluşturulan Etkinlik Detayı",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/events/evt_001", "host": ["{{baseUrl}}"], "path": ["events", "evt_001"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/events/{{createdEventId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "{{createdEventId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Create Event",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"İzmir Caz Buluşması\",\n  \"description\": \"Ege'nin en iyi caz sanatçıları bir arada.\",\n  \"category\": \"konser\",\n  \"city\": \"İzmir\",\n  \"venueId\": \"ven_004\",\n  \"date\": \"2026-11-15\",\n  \"price\": 300,\n  \"capacity\": 800\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/events", "host": ["{{baseUrl}}"], "path": ["events"] }
-          }
-        },
-        {
-          "name": "Update Event",
+          "name": "Oluşturulan Etkinliği Güncelle",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"price\": 275,\n  \"status\": \"active\"\n}" },
-            "url": { "raw": "{{baseUrl}}/events/evt_001", "host": ["{{baseUrl}}"], "path": ["events", "evt_001"] }
-          }
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 275\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/events/{{createdEventId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "{{createdEventId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Delete Event",
+          "name": "Oluşturulan Etkinliği Sil",
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/events/evt_004", "host": ["{{baseUrl}}"], "path": ["events", "evt_004"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Venues",
-      "item": [
-        {
-          "name": "List Venues",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": { "raw": "{{baseUrl}}/venues", "host": ["{{baseUrl}}"], "path": ["venues"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/events/{{createdEventId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "{{createdEventId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204 döner\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Create Venue",
+          "name": "Geçersiz Etkinlik Tarihini Reddet",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Bostancı Gösteri Merkezi\",\n  \"city\": \"İstanbul\",\n  \"address\": \"Kadıköy\",\n  \"capacity\": 3000\n}"
+              "raw": "{\n  \"title\": \"Geçersiz Tarih Testi\",\n  \"description\": \"Geçersiz tarih için doğrulama testi açıklaması.\",\n  \"category\": \"konser\",\n  \"city\": \"Ankara\",\n  \"venueId\": \"ven_004\",\n  \"date\": \"2026-02-31\",\n  \"price\": 100,\n  \"capacity\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/venues", "host": ["{{baseUrl}}"], "path": ["venues"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400 döner\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Olmayan Etkinliğin Detayı",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/events/evt_does_not_exist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "evt_does_not_exist"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404 döner\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "name": "Attendees",
+      "name": "Venues — Mekanlar",
       "item": [
         {
-          "name": "List Attendees",
+          "name": "Mekanları Listele",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/attendees", "host": ["{{baseUrl}}"], "path": ["attendees"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/venues",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "venues"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Create Attendee",
+          "name": "Mekan Oluştur",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Zeynep Arslan\",\n  \"email\": \"zeynep@example.com\",\n  \"phone\": \"05001112233\"\n}"
+              "raw": "{\n  \"name\": \"TicketHub Test Mekanı\",\n  \"city\": \"Ankara\",\n  \"address\": \"Test Sokak No: 1\",\n  \"capacity\": 300\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/attendees", "host": ["{{baseUrl}}"], "path": ["attendees"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/venues",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "venues"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201 döner\", function () { pm.response.to.have.status(201); });",
+                  "const responseData = pm.response.json();",
+                  "pm.collectionVariables.set(\"createdVenueId\", responseData.id);",
+                  "pm.test(\"Oluşturulan mekan ID içerir\", function () { pm.expect(responseData.id).to.be.a(\"string\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oluşturulan Mekan Detayı",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/venues/{{createdVenueId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "venues",
+                "{{createdVenueId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oluşturulan Mekanı Güncelle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": \"Güncellenmiş Test Adresi\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/venues/{{createdVenueId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "venues",
+                "{{createdVenueId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oluşturulan Mekanı Sil",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/venues/{{createdVenueId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "venues",
+                "{{createdVenueId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204 döner\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "name": "Tickets",
+      "name": "Attendees — Katılımcılar",
       "item": [
         {
-          "name": "List Tickets",
+          "name": "Katılımcıları Listele",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/tickets", "host": ["{{baseUrl}}"], "path": ["tickets"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/attendees",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendees"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Create Ticket",
+          "name": "Katılımcı Oluştur",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"eventId\": \"evt_001\",\n  \"attendeeId\": \"att_003\",\n  \"seat\": \"A5\"\n}"
+              "raw": "{\n  \"name\": \"TicketHub Test Katılımcısı\",\n  \"email\": \"tickethub.postman.test@example.com\",\n  \"phone\": \"05000000000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/tickets", "host": ["{{baseUrl}}"], "path": ["tickets"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/attendees",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendees"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201 döner\", function () { pm.response.to.have.status(201); });",
+                  "const responseData = pm.response.json();",
+                  "pm.collectionVariables.set(\"createdAttendeeId\", responseData.id);",
+                  "pm.test(\"Oluşturulan katılımcı ID içerir\", function () { pm.expect(responseData.id).to.be.a(\"string\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oluşturulan Katılımcı Detayı",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/attendees/{{createdAttendeeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendees",
+                "{{createdAttendeeId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oluşturulan Katılımcıyı Güncelle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"05001112233\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendees/{{createdAttendeeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendees",
+                "{{createdAttendeeId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oluşturulan Katılımcıyı Sil",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/attendees/{{createdAttendeeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendees",
+                "{{createdAttendeeId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204 döner\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "name": "Reports",
+      "name": "Tickets — Biletler",
       "item": [
         {
-          "name": "System Summary",
+          "name": "Biletleri Listele",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/reports/summary", "host": ["{{baseUrl}}"], "path": ["reports", "summary"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/tickets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Event Sales Report",
+          "name": "Bilet Oluştur",
           "request": {
-            "method": "GET",
-            "header": [],
-            "url": { "raw": "{{baseUrl}}/reports/evt_001/sales", "host": ["{{baseUrl}}"], "path": ["reports", "evt_001", "sales"] }
-          }
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"evt_003\",\n  \"attendeeId\": \"att_003\",\n  \"seat\": \"TH-{{$guid}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tickets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201 döner\", function () { pm.response.to.have.status(201); });",
+                  "const responseData = pm.response.json();",
+                  "pm.collectionVariables.set(\"createdTicketId\", responseData.id);",
+                  "pm.test(\"Oluşturulan bilet ID içerir\", function () { pm.expect(responseData.id).to.be.a(\"string\"); });"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Event Attendees",
+          "name": "Oluşturulan Bilet Detayı",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/reports/evt_001/attendees", "host": ["{{baseUrl}}"], "path": ["reports", "evt_001", "attendees"] }
-          }
+            "url": {
+              "raw": "{{baseUrl}}/tickets/{{createdTicketId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets",
+                "{{createdTicketId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oluşturulan Biletin Durumunu Güncelle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"used\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tickets/{{createdTicketId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets",
+                "{{createdTicketId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oluşturulan Bileti Sil",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/{{createdTicketId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets",
+                "{{createdTicketId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204 döner\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aynı Koltuğa İkinci Bileti Reddet",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"evt_001\",\n  \"attendeeId\": \"att_003\",\n  \"seat\": \"A1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tickets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409 döner\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
         }
       ]
+    },
+    {
+      "name": "Reports — Raporlama",
+      "item": [
+        {
+          "name": "Genel Sistem Özeti",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports",
+                "summary"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Etkinlik Satış Raporu",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/evt_001/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports",
+                "evt_001",
+                "sales"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Etkinlik Katılımcıları Raporu",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/evt_001/attendees",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports",
+                "evt_001",
+                "attendees"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 döner\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "System — Sistem",
+      "item": [
+        {
+          "name": "Bilinmeyen Endpoint",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/this-endpoint-does-not-exist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "this-endpoint-does-not-exist"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404 döner\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "createdEventId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "createdVenueId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "createdAttendeeId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "createdTicketId",
+      "value": "",
+      "type": "string"
     }
   ]
 }

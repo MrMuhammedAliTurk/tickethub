@@ -27,7 +27,8 @@ Bir etkinlik organizasyon şirketi; düzenlediği etkinlikleri, etkinliklerin ge
 
 - ✅ **Filtreleme, Arama, Sayfalama ve Sıralama** — kategori, şehir, durum, anahtar kelime filtreleri
 - ✅ **Validation Middleware** — Zorunlu alan, tip, enum ve e-posta doğrulaması
-- ✅ **Kapasite Kontrolü** — Etkinlik kapasitesi dolduğunda bilet satışının engellenmesi
+- ✅ **Veri Bütünlüğü** — Etkinlik, mekan, katılımcı ve bilet ilişkilerinin doğrulanması; ilişkili kayıtların hatalı silinmesinin önlenmesi
+- ✅ **Kapasite ve Koltuk Kontrolü** — Etkinlik kapasitesi dolduğunda veya aynı koltuk dolu olduğunda satışın engellenmesi
 - ✅ **Raporlama Servisleri** — Satış raporu, doluluk oranı, katılımcı listesi ve genel sistem özeti
 
 ## Kazanılan Yetkinlikler
@@ -39,5 +40,6 @@ Bir etkinlik organizasyon şirketi; düzenlediği etkinlikleri, etkinliklerin ge
 - Routing yapıları
 - CRUD operasyonları
 - JSON veri yönetimi ve kalıcılık
+- Otomatik API entegrasyon testleri (`npm test`)
 - Filtreleme, arama, sayfalama mantığı
 - İstatistiksel veri işleme (raporlama)

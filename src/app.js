@@ -7,11 +7,11 @@ const routes = require('./routes');
 
 const app = express();
 
+// Logger önce çalışır; JSON ayrıştırma hataları da loglanır.
+app.use(logger);
+
 // JSON body ayrıştırıcı
 app.use(express.json());
-
-// Logger middleware (tüm istekler için)
-app.use(logger);
 
 // Kök rota — API genel bakış
 app.get('/', (req, res) => {

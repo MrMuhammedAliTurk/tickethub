@@ -28,7 +28,7 @@ Desteklenen query parametreleri:
 | `city` | `?city=istanbul` | Şehre göre filtreleme |
 | `status` | `?status=active` | Duruma göre filtreleme |
 | `search` | `?search=caz` | Başlık/açıklamada arama |
-| `sort` | `?sort=price:desc` | Alana göre sıralama (`:asc`/`:desc`) |
+| `sort` | `?sort=price:desc` | `title`, `date`, `price`, `capacity`, `category`, `city` veya `status` alanına göre sıralama (`:asc`/`:desc`; yön verilmezse `asc`) |
 | `page` | `?page=1` | Sayfa numarası |
 | `limit` | `?limit=10` | Sayfa başına kayıt |
 
@@ -97,11 +97,13 @@ GET /events?category=konser&sort=price:desc&page=1&limit=10
 
 **Yanıt (201 Created):** Oluşturulan etkinlik (benzersiz `id` ile birlikte).
 
-**Yanıt (400):** Zorunlu alan eksikse veya girilen `venueId` mevcut değilse hata döner.
+**Yanıt (400):** Zorunlu alan eksik/geçersizse, ISO tarih biçimi doğru değilse, bilinmeyen alan gönderilmişse, `venueId` mevcut değilse veya etkinlik kapasitesi mekan kapasitesini aşıyorsa hata döner.
+
+Etkinlik kapasitesi, mekân kapasitesinden yüksek olamaz.
 
 ### `PUT /events/:id` — Etkinlik güncelleme
 
-Kısmi güncelleme desteklenir (yalnızca değiştirilmek istenen alanlar gönderilir).
+Kısmi güncelleme desteklenir (yalnızca değiştirilmek istenen alanlar gönderilir). Gönderilen alanlar şemaya göre doğrulanır; `id` gibi tanımsız alanlar, boş gövde ve `null` değerler reddedilir.
 
 **İstek gövdesi:**
 
@@ -113,6 +115,8 @@ Kısmi güncelleme desteklenir (yalnızca değiştirilmek istenen alanlar gönde
 
 **Yanıt (204 No Content):** Başarılı silme (gövde boş döner).
 
+**Yanıt (409 Conflict):** Etkinliğe bağlı biletler varsa kayıt bütünlüğünü korumak için silme engellenir.
+
 ---
 
 ## Venues — Mekanlar
@@ -123,7 +127,7 @@ Kısmi güncelleme desteklenir (yalnızca değiştirilmek istenen alanlar gönde
 | GET | `/venues/:id` | Mekan detayı |
 | POST | `/venues` | Mekan oluşturma |
 | PUT | `/venues/:id` | Mekan güncelleme |
-| DELETE | `/venues/:id` | Mekan silme |
+| DELETE | `/venues/:id` | Mekan silme (bağlı etkinlik yoksa) |
 
 **`POST /venues` istek gövdesi:**
 
@@ -146,7 +150,7 @@ Kısmi güncelleme desteklenir (yalnızca değiştirilmek istenen alanlar gönde
 | GET | `/attendees/:id` | Katılımcı detayı |
 | POST | `/attendees` | Katılımcı oluşturma |
 | PUT | `/attendees/:id` | Katılımcı güncelleme |
-| DELETE | `/attendees/:id` | Katılımcı silme |
+| DELETE | `/attendees/:id` | Katılımcı silme (bağlı bilet yoksa) |
 
 **`POST /attendees` istek gövdesi:**
 
@@ -167,7 +171,7 @@ Kısmi güncelleme desteklenir (yalnızca değiştirilmek istenen alanlar gönde
 | GET | `/tickets` | Bilet listeleme (`?eventId=`, `?attendeeId=`, `?status=`) |
 | GET | `/tickets/:id` | Bilet detayı |
 | POST | `/tickets` | Bilet oluşturma (kapasite kontrolü) |
-| PUT | `/tickets/:id` | Bilet güncelleme |
+| PUT | `/tickets/:id` | Bilet güncelleme (etkinlik/katılımcı doğrulaması yapılır; `price` sunucu tarafından yönetilir) |
 | DELETE | `/tickets/:id` | Bilet silme |
 
 ### Kapasite Kontrolü
@@ -193,7 +197,10 @@ Kısmi güncelleme desteklenir (yalnızca değiştirilmek istenen alanlar gönde
 ```
 
 > `seat` belirtilmezse sistem otomatik olarak bir koltuk numarası atar.
-> Bilet fiyatı otomatik olarak etkinliğin `price` değerinden alınır.
+> Bilet fiyatı otomatik olarak etkinliğin `price` değerinden alınır; istek gövdesinden değiştirilemez.
+> Aynı etkinlikte aynı koltuk için birden fazla aktif bilet oluşturulamaz.
+> Yalnızca aktif etkinlikler için bilet satışı yapılır.
+> Etkinlik, mekan veya katılımcı kaydı kendisine bağlı bilet/etkinlik varken silinemez; sistem `409 Conflict` döndürür.
 
 ---
 
@@ -256,8 +263,8 @@ Kısmi güncelleme desteklenir (yalnızca değiştirilmek istenen alanlar gönde
 | --- | --- |
 | `400` | Doğrulama hatası (eksik/geçersiz veri) |
 | `404` | Kaynak veya endpoint bulunamadı |
-| `409` | Kapasite dolu (bilet satışı engellendi) |
-| `500` | Sunucu hatası |
+| `409` | Kapasite dolu, koltuk çakışması veya ilişkili kayıt nedeniyle silme/güncellemenin engellenmesi |
+| `500` | Genel sunucu hatası (iç hata ayrıntıları yanıt gövdesinde gösterilmez) |
 
 Validation hatası örneği:
 
@@ -270,3 +277,7 @@ Validation hatası örneği:
   ]
 }
 ```
+
+
+## Mimari notu
+İş kuralları `src/services/` altında tutulur. Controller katmanı HTTP istek/yanıt dönüşümünü üstlenir; JSON veri deposunda geçici dosyaya yazma ve atomik dosya değiştirme yaklaşımı kullanılır.

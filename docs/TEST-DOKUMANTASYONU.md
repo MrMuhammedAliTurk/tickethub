@@ -1,6 +1,6 @@
 # TicketHub — Test Dokümantasyonu
 
-Bu doküman, API'nin doğruluğunu kanıtlamak için uygulanan test senaryolarını açıklar. Testler **Postman** üzerinden gerçekleştirilmiştir. Hazır koleksiyon `postman/TicketHub.postman_collection.json` dosyasında yer alır.
+Bu doküman, API'nin doğruluğunu kanıtlamak için uygulanan test senaryolarını açıklar. Postman koleksiyonu `postman/TicketHub.postman_collection.json` dosyasındadır. Otomatik entegrasyon testleri Node.js'in yerleşik `node:test` aracıyla çalıştırılır: `npm test`. Otomatik testler başlangıç veri dosyasının bir kopyasını kullanır; proje verisini değiştirmez.
 
 ## Test Senaryoları
 
@@ -82,3 +82,32 @@ Bu doküman, API'nin doğruluğunu kanıtlamak için uygulanan test senaryoları
 - Kapasite dolu olduğunda `409` döner ve satış gerçekleşmez.
 - Filtreleme/arama/sayfalama/sıralama doğru çalışır.
 - Raporlama servisleri doğru istatistikleri üretir.
+
+
+### 9. Otomatik API Testleri (`npm test`)
+
+| # | Senaryo | Beklenen Sonuç |
+| --- | --- | --- |
+| 9.1 | API kök rotası | `200 OK` ve kaynak listesi |
+| 9.2 | Filtreleme ve sayfalama | `200 OK` ve sayfalama alanları |
+| 9.3 | Geçersiz tarih | `400 Bad Request` |
+| 9.4 | İzin verilmeyen gövde alanı (`id`, `price` vb.) | `400 Bad Request` |
+| 9.5 | Etkinlik oluşturma/güncelleme | `201 Created` / `200 OK` |
+| 9.6 | Etkinlik kapasitesinin mekan kapasitesini aşması | `400 Bad Request` |
+| 9.7 | Dolu koltuğa tekrar bilet oluşturma | `409 Conflict` |
+| 9.8 | Bilet, etkinlik, mekan ve katılımcı ilişki kontrolleri | Uygun `400` veya `409` yanıtı |
+| 9.9 | Genel rapor | `200 OK` ve sistem özeti |
+| 9.10 | Tanımsız endpoint | `404 Not Found` |
+
+
+### 10. Servis katmanı ve veri deposu dayanıklılığı
+
+| # | Senaryo | Beklenen Sonuç |
+| --- | --- | --- |
+| 10.1 | İş kurallarının servis katmanından çağrılması | Controller katmanı servis sonucunu HTTP yanıtına dönüştürür |
+| 10.2 | JSON veri dosyasına kayıt yazma/güncelleme | Geçici dosya aracılığıyla kaydedilir ve sonraki süreçte okunabilir |
+| 10.3 | Başarılı yazma sonrası geçici dosyaların temizlenmesi | Veri dizininde yalnızca ana JSON dosyası bulunur |
+| 10.4 | Bozuk JSON veri dosyasıyla başlatma | Açıklayıcı hata oluşur; dosya otomatik olarak sıfırlanmaz |
+| 10.5 | Veri okuma sonucunun değiştirilmesi | Çağıranın elde ettiği kopya, iç veri deposunu doğrudan değiştirmez |
+
+Bu testler de `npm test` komutunun parçasıdır. Testler geçici dizinler ve ayrı JSON dosyaları kullandığı için projedeki başlangıç verilerine yazmaz.
